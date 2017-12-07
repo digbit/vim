@@ -480,7 +480,7 @@ au FileType python set indentkeys-=0#
             !./install.py --clang-completer --go-completer
         endif
     endfunction
-    Plug 'Valloric/YouCompleteMe', { 'for' : [ 'c', 'go' ], 'do': function('BuildYCM') }
+    Plug 'Valloric/YouCompleteMe', { 'for' : [ 'c', 'go', 'python' ], 'do': function('BuildYCM') }
     Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }   "强大的文件搜索
     Plug 'junegunn/fzf.vim'
 
@@ -560,6 +560,8 @@ au FileType python set indentkeys-=0#
     let g:ycm_use_ultisnips_completer = 1 "提示UltiSnips
     let g:ycm_collect_identifiers_from_comments_and_strings = 1   "注释和字符串中的文字也会被收入补全
     let g:ycm_collect_identifiers_from_tags_files = 1
+    "python解释器路径"
+    let g:ycm_python_binary_path = '/usr/local/bin/python3'
     " 开启语法关键字补全
     let g:ycm_seed_identifiers_with_syntax=1
     " 回车作为选中
