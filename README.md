@@ -1,2 +1,2 @@
 # vim
-vim for lua python 
+vim for lua, python, openresty 
