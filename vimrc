@@ -17,6 +17,12 @@
 "
 " Preset:
 " vim8 with lua, python
+" # install powerline fonts
+" git clone https://github.com/powerline/fonts.git --depth=1
+" cd fonts
+" ./install.sh
+" cd ..
+" rm -rf fonts
 " # ggreer/the_silver_searcher
 "  apt-get install silversearcher-ag
 " # junegunn/fzf
