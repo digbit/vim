@@ -17,34 +17,12 @@
 "
 " Preset:
 " vim8 with lua, python
-" # install powerline fonts
-" git clone https://github.com/powerline/fonts.git --depth=1
-" cd fonts
-" ./install.sh
-" cd ..
-" rm -rf fonts
-" # ggreer/the_silver_searcher
-"  apt-get install silversearcher-ag
-" # junegunn/fzf
-"  git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
-" ~/.fzf/install
-" # vim 环境搭建
-"  sudo apt-get install build-essential cmake
-"
-"  1: curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-"     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-"  2: mkdir ~/.vimundo/  and  mkdir ~/.vimbackup/
-"  3: pip3 install flake8 && pip3 install yapf && pip3 install --user powerline-status
-"  4: ale luacheck -> luarocks install luacheck
-"  5: install youcompleteme
-"
-" # Valloric/YouCompleteMe
-" sudo apt-get install golang
-" apt-get install python-dev
-" cd ~/.vim/vim_plugin/YouCompleteMe
-" git submodule update --init --recursive
-" ./install.py --clang-completer --go-completer
-
+" 1: curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+"    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+" 2: ~/.vimundo/  and ~/.vimbackup/
+" 3: pip install flake8 && pip install yapf && pip install --user powerline-status
+" 4: ale luacheck -> luarocks install luacheck
+" 5: install youcompleteme
 " Sections:
 "    -> General
 "    -> VIM user interface
@@ -368,6 +346,14 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Helper functions
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+    function StripTrailingWhite()
+        let l:winview = winsaveview()
+        silent! %s/\s\+$//
+        call winrestview(l:winview)
+    endfunction
+
+    autocmd BufWritePre,FileAppendPre,FileWritePre,FilterWritePre * :call StripTrailingWhite()
+
     " Returns true if paste mode is enabled
     function! HasPaste()
         if &paste
@@ -463,6 +449,7 @@ au FileType python set indentkeys-=0#
 
     Plug 'w0rp/ale'							"异步语法检查
 
+    Plug 'fatih/vim-go'                     "go 代码开发环境的的插件
     Plug 'SirVer/ultisnips'					"代码块补全
     Plug 'honza/vim-snippets'				"配合 ultisnips
 
@@ -486,7 +473,7 @@ au FileType python set indentkeys-=0#
             !./install.py --clang-completer --go-completer
         endif
     endfunction
-    Plug 'Valloric/YouCompleteMe', { 'for' : [ 'c', 'go', 'python' ], 'do': function('BuildYCM') }
+    Plug 'Valloric/YouCompleteMe', { 'for' : [ 'c', 'python', 'go' ], 'do': function('BuildYCM') }
     Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }   "强大的文件搜索
     Plug 'junegunn/fzf.vim'
 
@@ -501,6 +488,12 @@ au FileType python set indentkeys-=0#
         colo seoul256
     catch
     endtry
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => 在打开文件的同时，自动切换当前路径; 打开/tmp文件夹下的文件时不自动切换.
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+autocmd BufEnter * if expand("%:p:h") !~ '^/tmp' | silent! lcd %:p:h | endif
+
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Nerd Tree
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -523,6 +516,7 @@ au FileType python set indentkeys-=0#
 
     " E501 -> 120 chars
     let g:ale_python_flake8_args="--ignore=E114,E116,E131 --max-line-length=120"
+    "let g:ale_python_flake8_args="--ignore=E114,E116,E131,E501"
     " --ignore=E225,E124,E712,E116
 
     let g:ale_sign_error = '>>'
@@ -568,6 +562,7 @@ au FileType python set indentkeys-=0#
     let g:ycm_collect_identifiers_from_tags_files = 1
     "python解释器路径"
     let g:ycm_python_binary_path = '/usr/local/bin/python3'
+
     " 开启语法关键字补全
     let g:ycm_seed_identifiers_with_syntax=1
     " 回车作为选中
@@ -635,9 +630,9 @@ au FileType python set indentkeys-=0#
 " pip2 install --user powerline-status
 "
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-python3 from powerline.vim import setup as powerline_setup
-python3 powerline_setup()
-python3 del powerline_setup
+python from powerline.vim import setup as powerline_setup
+python powerline_setup()
+python del powerline_setup
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Nerdcommenter
@@ -815,4 +810,25 @@ let g:startify_list_order = [
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Openresty
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-autocmd BufRead,BufNewFile nginx*.conf set filetype=nginx
+autocmd BufRead,BufNewFile nginx_*.conf set filetype=nginx
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Go 开发
+" 安装Gocode
+"
+"go get -u github.com/nsf/gocode
+"gocode默认安装到$GOPATH/bin下面。
+
+" 配置Gocode
+"~ cd $GOPATH/src/github
+"~ cd $GOPATH/src/github.com/nsf/gocode/vim
+"~ ./update.bash
+"~ gocode set propose-builtins true
+"propose-builtins true
+"~ gocode set lib-path "/home/border/gocode/pkg/linux_amd64"
+"lib-path "/home/border/gocode/pkg/linux_amd64"
+"~ gocode set
+"propose-builtins true
+"lib-path "/home/border/gocode/pkg/linux_amd64"
+"你现在可以使用:e main.go体验一下开发Go的乐趣
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
