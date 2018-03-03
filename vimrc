@@ -707,6 +707,8 @@ xmap <Leader>ga   <Plug>(LiveEasyAlign)
             exec "VimtexCompile"
         elseif &filetype == 'lua'
             exec "AsyncRun! luajit %"
+        elseif &filetype == 'go'
+            exec "GoRun! %"
         endif
     endfunction
     " bind <F9> to open quickfix window rapidly.
@@ -830,5 +832,4 @@ autocmd BufRead,BufNewFile nginx_*.conf set filetype=nginx
 "~ gocode set
 "propose-builtins true
 "lib-path "/home/border/gocode/pkg/linux_amd64"
-"你现在可以使用:e main.go体验一下开发Go的乐趣
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
