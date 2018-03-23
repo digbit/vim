@@ -17,12 +17,50 @@
 "
 " Preset:
 " vim8 with lua, python
+"  ----------------------
+"  安装python3.6 和 liblua5.1 lua5.1-dev
+"  ----------------------
+" 编译vim8
+"  ----------------------
+"  git clone https://github.com/vim/vim.git
+"  删除旧vim
+"  dpkg -l | grep vim
+"  sudo apt-get remove vim-common vim-tiny
+"  编译
+"  ./configure \
+"  --with-features=huge \
+"  --enable-multibyte \
+"  --enable-rubyinterp=yes \
+"  --enable-pythoninterp=yes \
+"  --with-python-config-dir=/usr/lib/python2.7/config-x86_64-linux-gnu/ \
+"  --enable-python3interp=yes \
+"  --with-python3-config-dir=/usr/local/lib/python3.6/config-3.6m-x86_64-linux-gnu/ \
+"  --enable-perlinterp=yes \
+"  --enable-luainterp=yes \
+"  --prefix=/usr \
+"  设置环境
+"  make VIMRUNTIMEDIR=/usr/share/vim/vim80
+"  安装
+"  make install
+"  ----------------------
+"  安装 plug插件和 设置文件夹
 " 1: curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
 "    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 " 2: ~/.vimundo/  and ~/.vimbackup/
+"  pip -> pip3.6
 " 3: pip install flake8 && pip install yapf && pip install --user powerline-status
+" apt install luarocks
 " 4: ale luacheck -> luarocks install luacheck
 " 5: install youcompleteme
+" git clone https://github.com/Valloric/YouCompleteMe.git ~/.vim/vim_plugin/YouCompleteMe
+" cd YouCompleteMe
+" git submodule update --init --recursive
+" 编译
+" apt-get install build-essential cmake
+" cd .vim/vim_plugin/YouCompleteMe/
+" ./install.py --clang-completer --system-libclang
+
+"  ----------------------
 " Sections:
 "    -> General
 "    -> VIM user interface
@@ -43,7 +81,8 @@
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => General
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
+    " 解决兼容性问题
+    set nocompatible
     " Sets how many lines of history VIM has to remember
     set history=500
 
@@ -497,11 +536,11 @@ autocmd BufEnter * if expand("%:p:h") !~ '^/tmp' | silent! lcd %:p:h | endif
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Nerd Tree
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-    let g:NERDTreeWinPos = "right"
+    let g:NERDTreeWinPos = "left"
     let NERDTreeShowHidden=0
     let NERDTreeIgnore = ['\.pyc$', '__pycache__','\.pyo$']
     let g:NERDTreeWinSize=35
-    map <leader>nn :NERDTreeToggle<cr>
+    map <C-e> :NERDTreeToggle<cr>
     map <leader>nb :NERDTreeFromBookmark<Space>
     map <leader>nf :NERDTreeFind<cr>
 
@@ -711,8 +750,9 @@ xmap <Leader>ga   <Plug>(LiveEasyAlign)
             exec "GoRun! %"
         endif
     endfunction
+    map <C-f> :AsyncStop<CR>
     " bind <F9> to open quickfix window rapidly.
-    nmap <C-f> :call asyncrun#quickfix_toggle(10)<cr>
+    nmap <C-a> :call asyncrun#quickfix_toggle(10)<cr>
     " like Emacs, use <M-x> to type commands.
     set timeoutlen=500 ttimeoutlen=100
     exec "set <M-x>=\ex"
@@ -817,19 +857,15 @@ autocmd BufRead,BufNewFile nginx_*.conf set filetype=nginx
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Go 开发
 " 安装Gocode
-"
+" -----------setup gocode--------
 "go get -u github.com/nsf/gocode
 "gocode默认安装到$GOPATH/bin下面。
 
 " 配置Gocode
-"~ cd $GOPATH/src/github
-"~ cd $GOPATH/src/github.com/nsf/gocode/vim
+"~ cd $GOPATH/src/github.com/nsf/gocode
+"~ go build
+"~ go install
+" -----------setup vim--------
+"  cd $GOPATH/src/github.com/nsf/gocode/vim/
 "~ ./update.bash
-"~ gocode set propose-builtins true
-"propose-builtins true
-"~ gocode set lib-path "/home/border/gocode/pkg/linux_amd64"
-"lib-path "/home/border/gocode/pkg/linux_amd64"
-"~ gocode set
-"propose-builtins true
-"lib-path "/home/border/gocode/pkg/linux_amd64"
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
