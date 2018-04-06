@@ -37,7 +37,7 @@
 "  --with-python3-config-dir=/usr/local/lib/python3.6/config-3.6m-x86_64-linux-gnu/ \
 "  --enable-perlinterp=yes \
 "  --enable-luainterp=yes \
-"  --prefix=/usr \
+"  --prefix=/usr
 "  设置环境
 "  make VIMRUNTIMEDIR=/usr/share/vim/vim80
 "  安装
