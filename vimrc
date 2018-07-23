@@ -21,6 +21,7 @@
 "  ----------------------
 
 "  apt-get install lua5.1
+"  apt install luarocks
 "  或
 "  brew install lua
 "
@@ -63,7 +64,6 @@
 " pip install flake8
 " pip install yapf
 " npm install -g js-beautify
-" apt install luarocks
 "
 " Vue 编辑语法检查 FOR Plugin 'posva/vim-vue'
 "
@@ -74,7 +74,7 @@
 "
 " 5: install youcompleteme
 " git clone https://github.com/Valloric/YouCompleteMe.git ~/.vim/vim_plugin/YouCompleteMe
-" cd YouCompleteMe
+" cd ~/.vim/vim_plugin/YouCompleteMe
 " git submodule update --init --recursive
 " 编译
 " apt-get install build-essential cmake
