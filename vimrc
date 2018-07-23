@@ -43,6 +43,7 @@
 "  --with-python3-config-dir=$python3-config-dir \
 "  --enable-perlinterp=yes \
 "  --enable-luainterp=yes \
+"  --with-lua-prefix=/usr/local \
 "  --prefix=/usr
 "
 "  设置环境
