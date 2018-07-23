@@ -76,10 +76,14 @@
 " git clone https://github.com/Valloric/YouCompleteMe.git ~/.vim/vim_plugin/YouCompleteMe
 " cd ~/.vim/vim_plugin/YouCompleteMe
 " git submodule update --init --recursive
+"
 " 编译
 " apt-get install build-essential cmake
+" OR
+" brew install cmake
+"
 " cd .vim/vim_plugin/YouCompleteMe/
-" ./install.py --clang-completer --system-libclang
+" ./install.py --go-completer --js-completer --clang-completer
 "  ----------------------
 " Sections:
 "    -> General
@@ -612,9 +616,6 @@ let g:ycm_register_as_syntastic_checker = 0
 " nnoremap <leader>jd :YcmCompleter GoToDefinition<CR>
 nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
 nnoremap <leader>gd :YcmCompleter GoToDeclaration<CR>
-
-" 引入，可以补全系统，以及python的第三方包 针对新老版本YCM做了兼容
-let g:ycm_global_ycm_extra_conf = "~/.vim/vim_plugin/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_extra_conf.py"
 
 " 直接触发自动补全 insert模式下
 " let g:ycm_key_invoke_completion = '<C-Space>'
