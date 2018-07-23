@@ -1,5 +1,4 @@
 "
-"
 " +-----------------------------------------+
 " |  A programmer should know their tools.  |
 " +-----------------------------------------+
@@ -13,44 +12,65 @@
 "
 "Last Change:2017年10月11日
 "
-"Version:1.2
+"Version:1.5
 "
 " Preset:
-" vim8 with lua, python
-"  ----------------------
-"  安装python3.6 和 liblua5.1 lua5.1-dev
-"  ----------------------
-" 编译vim8
+" vim8 + Python3 + Lua
 "  ----------------------
 "  git clone https://github.com/vim/vim.git
-"  删除旧vim
-"  dpkg -l | grep vim
-"  sudo apt-get remove vim-common vim-tiny
-"  编译
+"  ----------------------
+
+"  apt-get install lua5.1
+"  或
+"  brew install lua
+"
+"  python3.7-config --configdir
+"
+"  python2-config-dir="/usr/lib/python2.7/config-x86_64-linux-gnu/"
+"  python3-config-dir="/usr/local/lib/python3.6/config-3.6m-x86_64-linux-gnu/"
+"  或
+"  python2-config-dir="/usr/lib/python2.7/config/"
+"  python3-config-dir="/Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/config-3.7m-darwin/"
+"
+"
 "  ./configure \
 "  --with-features=huge \
 "  --enable-multibyte \
 "  --enable-rubyinterp=yes \
 "  --enable-pythoninterp=yes \
-"  --with-python-config-dir=/usr/lib/python2.7/config-x86_64-linux-gnu/ \
+"  --with-python-config-dir=$python2-config-dir \
 "  --enable-python3interp=yes \
-"  --with-python3-config-dir=/usr/local/lib/python3.6/config-3.6m-x86_64-linux-gnu/ \
+"  --with-python3-config-dir=$python3-config-dir \
 "  --enable-perlinterp=yes \
 "  --enable-luainterp=yes \
 "  --prefix=/usr
+"
 "  设置环境
-"  make VIMRUNTIMEDIR=/usr/share/vim/vim80
+"  make VIMRUNTIMEDIR=/usr/share/vim/vim81
 "  安装
 "  make install
+"
+"  ----------------------
+"  For Mac / cmd+r / csrutil disable 才能覆盖 /usr/bin/vim
 "  ----------------------
 "  安装 plug插件和 设置文件夹
 " 1: curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
 "    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 " 2: ~/.vimundo/  and ~/.vimbackup/
 "  pip -> pip3.6
-" 3: pip install flake8 && pip install yapf && pip install --user powerline-status
+" 3:
+" pip install flake8
+" pip install yapf
+" npm install -g js-beautify
 " apt install luarocks
+"
+" Vue 编辑语法检查 FOR Plugin 'posva/vim-vue'
+"
+" npm i -g eslint eslint-plugin-vue
+"
+"
 " 4: ale luacheck -> luarocks install luacheck
+"
 " 5: install youcompleteme
 " git clone https://github.com/Valloric/YouCompleteMe.git ~/.vim/vim_plugin/YouCompleteMe
 " cd YouCompleteMe
@@ -59,7 +79,6 @@
 " apt-get install build-essential cmake
 " cd .vim/vim_plugin/YouCompleteMe/
 " ./install.py --clang-completer --system-libclang
-
 "  ----------------------
 " Sections:
 "    -> General
@@ -74,7 +93,6 @@
 "    -> Spell checking
 "    -> Misc
 "    -> Helper functions
-"    -> FileTypes
 "    -> VIM Plugin and Settings
 "
 
@@ -445,31 +463,6 @@
         let @" = l:saved_reg
     endfunction
 
-
-""""""""""""""""""""""""""""""
-" => FileTypes
-""""""""""""""""""""""""""""""
-"  Python section
-let python_highlight_all = 1
-au FileType python syn keyword pythonDecorator True None False self
-
-au BufNewFile,BufRead *.jinja set syntax=htmljinja
-au BufNewFile,BufRead *.mako set ft=mako
-
-au FileType python map <buffer> F :set foldmethod=indent<cr>
-
-au FileType python inoremap <buffer> $r return
-au FileType python inoremap <buffer> $i import
-au FileType python inoremap <buffer> $p print
-au FileType python inoremap <buffer> $f #--- <esc>a
-au FileType python map <buffer> <leader>1 /class
-au FileType python map <buffer> <leader>2 /def
-au FileType python map <buffer> <leader>C ?class
-au FileType python map <buffer> <leader>D ?def
-au FileType python set cindent
-au FileType python set cinkeys-=0#
-au FileType python set indentkeys-=0#
-
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM Plugin and Settings
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -506,17 +499,23 @@ au FileType python set indentkeys-=0#
     Plug 'tpope/vim-surround'               "符号对补齐
     Plug 'mhinz/vim-startify'               "启动界面
 
+    Plug 'vim-airline/vim-airline'
+    Plug 'vim-airline/vim-airline-themes'
+
     " On-damand loading of plugins
     function! BuildYCM(info)
         if a:info.status == 'installed' || a:info.force
             !./install.py --clang-completer --go-completer
         endif
     endfunction
-    Plug 'Valloric/YouCompleteMe', { 'for' : [ 'c', 'python', 'go' ], 'do': function('BuildYCM') }
+    Plug 'Valloric/YouCompleteMe', { 'for' : [ 'python', 'go' ], 'do': function('BuildYCM') }
+
     Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }   "强大的文件搜索
     Plug 'junegunn/fzf.vim'
 
-    Plug 'spacewander/openresty-vim'    "openresty 编辑帮助
+    " Vue edit
+    Plug 'posva/vim-vue'
+
     " Initialize plugin system
     call plug#end()
 
@@ -540,6 +539,13 @@ autocmd BufEnter * if expand("%:p:h") !~ '^/tmp' | silent! lcd %:p:h | endif
     let NERDTreeShowHidden=0
     let NERDTreeIgnore = ['\.pyc$', '__pycache__','\.pyo$']
     let g:NERDTreeWinSize=35
+    let NERDTreeChDirMode = 2
+    let NERDTreeShowLineNumbers = 1
+    let NERDTreeAutoCenter = 1
+
+    " Open NERDTree on startup, when no file has been specified
+    autocmd VimEnter * if !argc() | NERDTree | endif
+
     map <C-e> :NERDTreeToggle<cr>
     map <leader>nb :NERDTreeFromBookmark<Space>
     map <leader>nf :NERDTreeFind<cr>
@@ -547,17 +553,6 @@ autocmd BufEnter * if expand("%:p:h") !~ '^/tmp' | silent! lcd %:p:h | endif
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " =>ale
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-    " pip install flake8
-    let g:ale_linters = {
-    \   'python': ['flake8','pycodestyle'],
-    \   'lua': ['luacheck'],
-    \}
-
-    " E501 -> 120 chars
-    let g:ale_python_flake8_args="--ignore=E114,E116,E131 --max-line-length=120"
-    "let g:ale_python_flake8_args="--ignore=E114,E116,E131,E501"
-    " --ignore=E225,E124,E712,E116
-
     let g:ale_sign_error = '>>'
     let g:ale_sign_warning = '>'
 
@@ -585,6 +580,7 @@ autocmd BufEnter * if expand("%:p:h") !~ '^/tmp' | silent! lcd %:p:h | endif
     let g:ale_set_highlights = 1
     highlight clear ALEErrorSign
     highlight clear ALEWarningSign
+
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " =>YCM
@@ -641,15 +637,11 @@ autocmd BufEnter * if expand("%:p:h") !~ '^/tmp' | silent! lcd %:p:h | endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " =>  Autoformat
-" sudo pip install yapf
+"
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-    "
-    autocmd FileType python,c noremap <buffer> <F10> :Autoformat<CR>
-    " nmap <buffer> <F8> :Autoformat<CR>
     " 插件会自动设置这两项，yapf 的优势在于代码风格的可定制性。
-    let g:formatter_python=['yapf']
-    let g:formatter_yapf_style='google'
-
+    " google, facebook, chromium.
+    let g:formatter_yapf_style='pep8'
     let g:autoformat_autoindent=0
     let g:autoformat_retab=0
     let g:autoformat_remove_trailing_spaces=0
@@ -662,16 +654,6 @@ autocmd BufEnter * if expand("%:p:h") !~ '^/tmp' | silent! lcd %:p:h | endif
     let g:indentLine_color_term = 239
     let g:indentLine_color_gui = '#616161'
     nmap <leader>i :IndentLinesToggle<cr>
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Powerline
-" pip3 install --user powerline-status
-" pip2 install --user powerline-status
-"
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-python from powerline.vim import setup as powerline_setup
-python powerline_setup()
-python del powerline_setup
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Nerdcommenter
@@ -694,7 +676,6 @@ python del powerline_setup
     " 跨窗口搜索一（两）个字母
     map f <Plug>(easymotion-overwin-f)
     map s <Plug>(easymotion-overwin-f2)
-    map / <Plug>(easymotion-sn)
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " =>vim-easy-align
@@ -745,7 +726,7 @@ xmap <Leader>ga   <Plug>(LiveEasyAlign)
         elseif &filetype == 'tex'
             exec "VimtexCompile"
         elseif &filetype == 'lua'
-            exec "AsyncRun! luajit %"
+            exec "AsyncRun! lua %"
         elseif &filetype == 'go'
             exec "GoRun! %"
         endif
@@ -848,12 +829,19 @@ let g:startify_list_order = [
             \ ['   Commands:'],
             \ 'commands',
             \ ]
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Openresty
+" => airline
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-autocmd BufRead,BufNewFile nginx_*.conf set filetype=nginx
-
+"打开tabline功能,方便查看Buffer和切换,省去了minibufexpl插件
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#buffer_nr_show = 1
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Vue
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+autocmd FileType vue syntax sync fromstart
+let g:vue_disable_pre_processors=1
+" Set indent size = 2 for web stuff
+autocmd FileType javascript,html,css,yaml,vue setlocal expandtab shiftwidth=2 softtabstop=2
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Go 开发
 " 安装Gocode
@@ -869,3 +857,23 @@ autocmd BufRead,BufNewFile nginx_*.conf set filetype=nginx
 "  cd $GOPATH/src/github.com/nsf/gocode/vim/
 "~ ./update.bash
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+autocmd FileType go nmap <Leader>co <Nop>
+autocmd FileType go nmap <Leader>c <Plug>(go-coverage-toggle)
+" note: just use 'gd' for go-def
+" autocmd FileType go nmap <Leader>df <Plug>(go-def)
+let g:go_fmt_fail_silently = 1
+let g:go_snippet_case_type = "camelcase"
+let g:go_highlight_types = 1
+" run :GoBuild or :GoTestCompile based on the go file
+function! s:build_go_files()
+  let l:file = expand('%')
+  if l:file =~# '^\f\+_test\.go$'
+    call go#cmd#Test(0, 1)
+  elseif l:file =~# '^\f\+\.go$'
+    call go#cmd#Build(0)
+  endif
+endfunction
+
+autocmd FileType go nmap <leader>b :<C-u>call <SID>build_go_files()<CR>
+au FileType go nmap <Leader>f <Plug>(go-referrers)
+
