@@ -84,6 +84,18 @@
 "
 " cd .vim/vim_plugin/YouCompleteMe/
 " ./install.py --go-completer --js-completer --clang-completer
+"
+" 6: flake8 配置
+" /var/web  cat ~/.config/flake8
+" [flake8]
+" ignore = E501
+"
+" 7: yapf 配置
+" hugo@mars  /var/web  yapf --style-help > a
+" hugo@mars  /var/web  mv a .style.yapf
+"
+" 修改 .style.yapf 里面的样式
+"
 "  ----------------------
 " Sections:
 "    -> General
@@ -547,7 +559,6 @@ let g:NERDTreeWinSize=35
 let NERDTreeChDirMode = 2
 let NERDTreeShowLineNumbers = 1
 let NERDTreeAutoCenter = 1
-
 " Open NERDTree on startup, when no file has been specified
 autocmd VimEnter * if !argc() | NERDTree | endif
 
@@ -646,9 +657,14 @@ map <leader>us :UltiSnipsEdit<CR>
 let g:formatter_yapf_style='pep8'
 let g:autoformat_autoindent=0
 let g:autoformat_retab=0
-let g:autoformat_remove_trailing_spaces=0
+let g:autoformat_remove_trailing_spaces=1
 autocmd FileType vim,tex let b:autoformat_autoindent=0
-au BufWrite * :Autoformat
+
+set autoread
+
+au BufWrite *.py :Autoformat
+au BufWrite *.json :Autoformat
+au BufWrite *.go :Autoformat
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " =>  IndentLine
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
