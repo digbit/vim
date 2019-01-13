@@ -107,7 +107,6 @@
 "    -> Moving around, tabs and buffers
 "    -> Status line, Folding
 "    -> Editing mappings
-"    -> Spell checking
 "    -> Misc
 "    -> Helper functions
 "    -> VIM Plugin and Settings
@@ -130,8 +129,11 @@ set autoread
 
 " With a map leader it's possible to do extra key combinations
 " like <leader>w saves the current file
-let mapleader = ","
-let g:mapleader = ","
+" let mapleader = ","
+" let g:mapleader = ","
+
+let g:mapleader = "\<Space>"
+let g:maplocalleader = ","
 
 " Fast saving
 nmap <leader>w :w!<cr>
@@ -282,11 +284,34 @@ set clipboard+=unnamed  "访问系统剪贴板
 """"""""""""""""""""""""""""""
 " Visual mode pressing * or # searches for the current selection
 " Super useful! From an idea by Michael Naumann
-vnoremap <silent> * :<C-u>call VisualSelection('', '')<CR>/<C-R>=@/<CR><CR>
-vnoremap <silent> # :<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>
+vnoremap <silent> * :<C-u>/<C-R>=@/<CR><CR>
+vnoremap <silent> # :<C-u>?<C-R>=@/<CR><CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Moving around, tabs, windows and buffers
+" f s --> easymotion
+" /   --> search
+" d   --> 删除
+" <C-N><C-P>          : 插入模式下的单词自动完成
+" <C-X><C-L>          : 行自动完成(超级有用)
+"
+"
+" <leader> b  ==> buffers
+" <leader> t  ==> tabs
+" <leader> cd ==> cd
+" <leader> c  ==> comments
+" <leader> a  ==> easy align
+" <leader> z
+" <Leader> e  ==> error 相关
+" <Leader> n  ==> nerdtree 相关
+" <leader> jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
+" <leader> jc :YcmCompleter GoToDeclaration<CR>
+" <leader> m  ===> move line
+" <leader> d  ===> 删除
+" <leader> g  ===> golang 相关
+" <leader> f  ===> fzf ag rg 相关
+" <leader> k  ===> marks 相关
+"
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 "  / (search) and  ? (backwards search)
 
@@ -298,15 +323,12 @@ map <C-j> <C-W>j
 map <C-k> <C-W>k
 map <C-h> <C-W>h
 map <C-l> <C-W>l
-
 " Close the current buffer
 map <leader>bd :Bclose<cr>:tabclose<cr>gT
-
 " Close all the buffers
 map <leader>ba :bufdo bd<cr>
-
-map <leader>l :bnext<cr>
-map <leader>h :bprevious<cr>
+map <leader>bn :bnext<cr>
+map <leader>bp :bprevious<cr>
 
 " Useful mappings for managing tabs
 map <leader>tn :tabnew<cr>
@@ -314,17 +336,13 @@ map <leader>to :tabonly<cr>
 map <leader>tc :tabclose<cr>
 map <leader>tm :tabmove
 map <leader>t<leader> :tabnext
-
 " Let 'tl' toggle between this and the last accessed tab
 let g:lasttab = 1
 nmap <Leader>tl :exe "tabn ".g:lasttab<CR>
 au TabLeave * let g:lasttab = tabpagenr()
-
-
 " Opens a new tab with the current buffer's path
 " Super useful when editing files in the same directory
 map <leader>te :tabedit <c-r>=expand("%:p:h")<cr>/
-
 " Switch CWD to the directory of the open buffer
 map <leader>cd :cd %:p:h<cr>:pwd<cr>
 
@@ -354,28 +372,17 @@ set foldmethod=indent  "设置缩进折叠
 set foldcolumn=0       "设置折叠区域的宽度
 setlocal foldlevel=1   "设置折叠层数为...
 " set foldclose=all      "设置为自动关闭折叠
-" nnoremap <space> @=((foldclosed(line('.'))<0) ? 'zc' : 'zo')<CR>
-"用空格键来开关折叠
+nmap <leader>z @=((foldclosed(line('.'))<0) ? 'zc' : 'zo')<CR>
+"用<leader>z来开关折叠
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Editing mappings
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Remap VIM 0 to first non-blank character
-map 11 ^
-map 00 g$
-
-" Move a line of text using ALT+[jk] or Command+[jk] on mac
-nmap <M-j> mz:m+<cr>`z
-nmap <M-k> mz:m-2<cr>`z
-vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
-vmap <M-k> :m'<-2<cr>`>my`<mzgv`yo`z
-
-if has("mac") || has("macunix")
-    nmap <D-j> <M-j>
-    nmap <D-k> <M-k>
-    vmap <D-j> <M-j>
-    vmap <D-k> <M-k>
-endif
+" Move a line of text
+nmap <leader>mj mz:m+<cr>`z
+nmap <leader>mk mz:m-2<cr>`z
+vmap <leader>mj :m'>+<cr>`<my`>mzgv`yo`z
+vmap <leader>mk :m'<-2<cr>`>my`<mzgv`yo`z
 
 " Delete trailing white space on save, useful for some filetypes ;)
 fun! CleanExtraSpaces()
@@ -391,28 +398,17 @@ if has("autocmd")
 endif
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Spell checking
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Pressing ,ss will toggle and untoggle spell checking
-map <leader>ss :setlocal spell!<cr>
-
-" Shortcuts using <leader>
-map <leader>sn ]s
-map <leader>sp [s
-map <leader>sa zg
-map <leader>s? z=
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Misc
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Remap VIM to first non-blank character
+map <Leader>; ^
+map <Leader>' g$
+
 " Remove the Windows ^M - when the encodings gets messed up
-noremap <Leader>m mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
+noremap <Leader>dm mmHmt:%s/<C-V><cr>//ge<cr>'tzt'm
 
 " Quickly open a buffer for scribble
 map <leader>q :e ~/buffer<cr>
-
-" Quickly open a markdown buffer for scribble
-map <leader>x :e ~/buffer.md<cr>
 
 " Toggle paste mode on and off
 map <leader>pp :setlocal paste!<cr>
@@ -428,13 +424,6 @@ endfunction
 
 autocmd BufWritePre,FileAppendPre,FileWritePre,FilterWritePre * :call StripTrailingWhite()
 
-" Returns true if paste mode is enabled
-function! HasPaste()
-    if &paste
-        return 'PASTE MODE  '
-    endif
-    return ''
-endfunction
 
 " Don't close window, when deleting a buffer
 command! Bclose call <SID>BufcloseCloseIt()
@@ -463,23 +452,6 @@ function! CmdLine(str)
     unmenu Foo
 endfunction
 
-function! VisualSelection(direction, extra_filter) range
-    let l:saved_reg = @"
-    execute "normal! vgvy"
-
-    let l:pattern = escape(@", "\\/.*'$^~[]")
-    let l:pattern = substitute(l:pattern, "\n$", "", "")
-
-    if a:direction == 'gv'
-        call CmdLine("Ack '" . l:pattern . "' " )
-    elseif a:direction == 'replace'
-        call CmdLine("%s" . '/'. l:pattern . '/')
-    endif
-
-    let @/ = l:pattern
-    let @" = l:saved_reg
-endfunction
-
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => VIM Plugin and Settings
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -504,6 +476,10 @@ Plug 'honza/vim-snippets'				"配合 ultisnips
 
 Plug 'chiel92/vim-autoformat'			"自动格式化代码
 Plug 'Yggdroot/indentLine'				"自动显示缩进线
+
+Plug 'rizzatti/dash.vim'
+
+Plug 'liuchengxu/vim-which-key'         "提示leader的快捷键
 
 Plug 'scrooloose/nerdcommenter'			"批量、快速注释
 Plug 'easymotion/vim-easymotion'		"快速查找定位
@@ -544,6 +520,11 @@ try
 catch
 endtry
 
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => vim which key
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+nnoremap <silent> <leader> :WhichKey '<Space>'<CR>
+nnoremap <silent> <localleader> :WhichKey ','<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => 在打开文件的同时，自动切换当前路径; 打开/tmp文件夹下的文件时不自动切换.
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -591,7 +572,7 @@ function! ToggleErrors()
         lopen
     endif
 endfunction
-nnoremap <Leader>s :call ToggleErrors()<cr>
+nnoremap <Leader>ee :call ToggleErrors()<cr>
 
 let g:ale_set_highlights = 1
 highlight clear ALEErrorSign
@@ -624,9 +605,8 @@ let g:ycm_key_list_stop_completion = ['<CR>']
 " 跳转到定义处, 分屏打开
 let g:ycm_goto_buffer_command = 'horizontal-split'
 let g:ycm_register_as_syntastic_checker = 0
-" nnoremap <leader>jd :YcmCompleter GoToDefinition<CR>
 nnoremap <leader>jd :YcmCompleter GoToDefinitionElseDeclaration<CR>
-nnoremap <leader>gd :YcmCompleter GoToDeclaration<CR>
+nnoremap <leader>jc :YcmCompleter GoToDeclaration<CR>
 
 " 直接触发自动补全 insert模式下
 " let g:ycm_key_invoke_completion = '<C-Space>'
@@ -677,7 +657,6 @@ nmap <leader>i :IndentLinesToggle<cr>
 " => Nerdcommenter
 " <leader>cc   加注释
 " <leader>cu   解开注释
-"
 " <leader>c<space>  加上/解开注释, 智能判断
 " <leader>cy   先复制, 再注解(p可以进行黏贴)
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -697,18 +676,18 @@ map s <Plug>(easymotion-overwin-f2)
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " =>vim-easy-align
-" ,a=        对齐等号表达
-" ,a:        对齐冒号表达式(json/map等)
+" <leader>a=        对齐等号表达
+" <leader>a:        对齐冒号表达式(json/map等)
 "
 " # 默认左对齐
-" ,a<space>  首个空格对齐
-" ,a2<space> 第二个空格对齐
-" ,a-<space> 倒数第一个空格对齐
-" ,a-2<space> 倒数第二个空格对齐
-" ,a*<space> 所有空格依次对齐
+" <leader>a<space>  首个空格对齐
+" <leader>a2<space> 第二个空格对齐
+" <leader>a-<space> 倒数第一个空格对齐
+" <leader>a-2<space> 倒数第二个空格对齐
+" <leader>a*<space> 所有空格依次对齐
 "
 " # 右对齐
-" ,a<Enter>*<space>
+" <leader>a<Enter>*<space>
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 vmap <Leader>a <Plug>(EasyAlign)
 nmap <Leader>a <Plug>(EasyAlign)
@@ -716,9 +695,6 @@ if !exists('g:easy_align_delimiters')
     let g:easy_align_delimiters = {}
 endif
 let g:easy_align_delimiters['#'] = { 'pattern': '#', 'ignore_groups': ['String'] }
-
-xmap <Leader>ga   <Plug>(LiveEasyAlign)
-
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " =>AsyncRun
@@ -769,9 +745,8 @@ augroup vimrc
 augroup END
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => FZF and FZF-VIM
-" 推荐安装ag
-" https://github.com/ggreer/the_silver_searcher
 " brew install the_silver_searcher
+" brew install ripgrep
 " 安装
 " git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
 " ~/.fzf/install
@@ -791,14 +766,12 @@ let g:fzf_files_options = '--preview "(coderay {} || cat {}) 2> /dev/null || tre
 " nnoremap <silent> <Leader><Leader> :Files<CR>
 " nnoremap <silent> <expr> <Leader><Leader> (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":Files\<cr>"
 nnoremap <silent> <expr> <C-g>  (expand('%') =~ 'NERD_tree' ? "\<c-w>\<c-w>" : '').":Files\<cr>"
-nnoremap <silent> <Leader>ac        :Colors<CR>
-nnoremap <silent> <Leader><Enter>  :Buffers<CR>
-nnoremap <silent> <Leader>ag       :Ag <C-R><C-W><CR>
-nnoremap <silent> <Leader>AG       :Ag <C-R><C-A><CR>
-nnoremap <silent> <Leader>`        :Marks<CR>
-nnoremap <silent> q: :History:<CR>
-nnoremap <silent> q/ :History/<CR>
-
+nmap <leader>fp :Files<CR>
+nmap <leader>fe :Buffers<CR>
+nmap <leader>fa :ag<C-R><C-W><CR>
+nmap <leader>fr :rg<C-R><C-A><CR>
+nnoremap <silent> <Leader>fm :Marks<CR>
+nnoremap <silent> <Leader>fh :History:<CR>
 nmap <leader><tab> <plug>(fzf-maps-n)
 xmap <leader><tab> <plug>(fzf-maps-x)
 omap <leader><tab> <plug>(fzf-maps-o)
@@ -808,6 +781,21 @@ command! Plugs call fzf#run({
             \ 'options': '--delimiter / --nth -1',
             \ 'down':    '~40%',
             \ 'sink':    'Explore'})
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 1.设置标签
+" ma 在当前位置设立一个标签名字是a，这是一个局部标签，只在当前文件内有效。
+" 如果要设置全局标签，在多个文件之间跳转的话，只要将标签名字大写就可，即mA。
+" 2.标签跳转
+" `a 跳转到标签a的位置
+" 3.标签删除 delmarks a
+" 4.查看当前设置的标签 ：marks
+
+nmap <leader>k :Marks<CR>
+nmap <leader>ka ma<CR>
+nmap <leader>kg mA<CR>
+"  删除当前缓冲区的所有标记。
+nmap <leader>kd :delmarks! <CR>
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " =>Surround
@@ -875,8 +863,8 @@ autocmd FileType javascript,html,css,yaml,vue setlocal expandtab shiftwidth=2 so
 "  cd $GOPATH/src/github.com/nsf/gocode/vim/
 "~ ./update.bash
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-autocmd FileType go nmap <Leader>co <Nop>
-autocmd FileType go nmap <Leader>c <Plug>(go-coverage-toggle)
+autocmd FileType go nmap <Leader>go <Nop>
+autocmd FileType go nmap <Leader>gc <Plug>(go-coverage-toggle)
 " note: just use 'gd' for go-def
 " autocmd FileType go nmap <Leader>df <Plug>(go-def)
 let g:go_fmt_fail_silently = 1
@@ -892,5 +880,5 @@ function! s:build_go_files()
     endif
 endfunction
 
-autocmd FileType go nmap <leader>b :<C-u>call <SID>build_go_files()<CR>
-au FileType go nmap <Leader>f <Plug>(go-referrers)
+autocmd FileType go nmap <leader>gb :<C-u>call <SID>build_go_files()<CR>
+au FileType go nmap <Leader>gf <Plug>(go-referrers)
