@@ -10,48 +10,7 @@
 "                     ||     ||
 "
 "
-"Last Change:2017年10月11日
-"
-"Version:1.5
-"
-" Preset:
-" vim8 + Python3 + Lua
-"  ----------------------
-"  git clone https://github.com/vim/vim.git
-"  ----------------------
-
-"  apt-get install lua5.1
-"  apt install luarocks
-"  或
-"  brew install lua
-"
-"  python3.7-config --configdir
-"
-"  python2-config-dir="/usr/lib/python2.7/config-x86_64-linux-gnu/"
-"  python3-config-dir="/usr/local/lib/python3.6/config-3.6m-x86_64-linux-gnu/"
-"  或
-"  python2-config-dir="/usr/lib/python2.7/config/"
-"  python3-config-dir="/Library/Frameworks/Python.framework/Versions/3.7/lib/python3.7/config-3.7m-darwin/"
-"
-"
-"  ./configure \
-"  --with-features=huge \
-"  --enable-multibyte \
-"  --enable-rubyinterp=yes \
-"  --enable-pythoninterp=yes \
-"  --with-python-config-dir=$python2-config-dir \
-"  --enable-python3interp=yes \
-"  --with-python3-config-dir=$python3-config-dir \
-"  --enable-perlinterp=yes \
-"  --enable-luainterp=yes \
-"  --with-lua-prefix=/usr/local \
-"  --prefix=/usr
-"
-"  设置环境
-"  make VIMRUNTIMEDIR=/usr/share/vim/vim81
-"  安装
-"  make install
-"
+"Last Change:2020年07月01日
 "  ----------------------
 "  For Mac / cmd+r / csrutil disable 才能覆盖 /usr/bin/vim
 "  ----------------------
@@ -63,13 +22,6 @@
 " 3:
 " pip install flake8
 " pip install yapf
-" npm install -g js-beautify
-"
-" Vue 编辑语法检查 FOR Plugin 'posva/vim-vue'
-"
-" npm i -g eslint eslint-plugin-vue
-"
-"
 " 4: ale luacheck -> luarocks install luacheck
 "
 " 5: install youcompleteme
@@ -83,7 +35,7 @@
 " brew install cmake
 "
 " cd .vim/vim_plugin/YouCompleteMe/
-" ./install.py --go-completer --js-completer --clang-completer
+" ./install.py --go-completer --rust-completer --clang-completer
 "
 " 6: flake8 配置
 " /var/web  cat ~/.config/flake8
@@ -495,6 +447,10 @@ Plug 'mhinz/vim-startify'               "启动界面
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 
+Plug 'majutsushi/tagbar'                "brew install --HEAD universal-ctags/universal-ctags/universal-ctags
+
+Plug 'Raimondi/delimitMate'             "自动补全引号(单引号/双引号/反引号), 括号(()[]{})的插件
+
 " On-damand loading of plugins
 function! BuildYCM(info)
     if a:info.status == 'installed' || a:info.force
@@ -505,9 +461,6 @@ Plug 'Valloric/YouCompleteMe', { 'for' : [ 'python', 'go' ], 'do': function('Bui
 
 Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }   "强大的文件搜索
 Plug 'junegunn/fzf.vim'
-
-" Vue edit
-Plug 'posva/vim-vue'
 
 " Initialize plugin system
 call plug#end()
@@ -541,11 +494,24 @@ let NERDTreeChDirMode = 2
 let NERDTreeShowLineNumbers = 1
 let NERDTreeAutoCenter = 1
 " Open NERDTree on startup, when no file has been specified
-autocmd VimEnter * if !argc() | NERDTree | endif
+" autocmd VimEnter * if !argc() | NERDTree | endif
 
 map <C-e> :NERDTreeToggle<cr>
 map <leader>nb :NERDTreeFromBookmark<Space>
 map <leader>nf :NERDTreeFind<cr>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" =>ctags
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" 启动时自动focus
+" 设置宽度为30
+let g:tagbar_width = 30
+"关闭排序,即按标签本身在文件中的位置排序
+let g:tagbar_sort = 0
+map <C-k> :TagbarToggle<CR>
+let g:tagbar_auto_faocus =1
+" 启动指定文件时自动开启tagbar
+autocmd BufReadPost *.go,*.py,*.lua,*.rs,*.cpp,*.c,*.h,*.hpp,*.cc,*.cxx call tagbar#autoopen()
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " =>ale
@@ -842,25 +808,16 @@ let g:startify_list_order = [
 let g:airline#extensions#tabline#enabled = 1
 let g:airline#extensions#tabline#buffer_nr_show = 1
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" => Vue
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-autocmd FileType vue syntax sync fromstart
-let g:vue_disable_pre_processors=1
-" Set indent size = 2 for web stuff
-autocmd FileType javascript,html,css,yaml,vue setlocal expandtab shiftwidth=2 softtabstop=2
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Go 开发
 " 安装Gocode
 " -----------setup gocode--------
-"go get -u github.com/nsf/gocode
+"  go get -u github.com/mdempsky/gocode
 "gocode默认安装到$GOPATH/bin下面。
 
 " 配置Gocode
-"~ cd $GOPATH/src/github.com/nsf/gocode
-"~ go build
-"~ go install
+"
 " -----------setup vim--------
-"  cd $GOPATH/src/github.com/nsf/gocode/vim/
+" cd $GOPATH/pkg/mod/github.com/mdempsky/gocode@v0.0.0-20200405233807-4acdcbdea79d/vim
 "~ ./update.bash
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 autocmd FileType go nmap <Leader>go <Nop>
